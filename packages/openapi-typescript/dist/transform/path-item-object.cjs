@@ -37,15 +37,29 @@ function transformPathItemObject(pathItem, options) {
     }
     const keyedParameters = {};
     if (!("$ref" in operationObject$1)) {
-      if (operationObject$1.security && operationObject$1.security.find((s) => "BearerAuth" in s)) {
+      const security = operationObject$1.security;
+      const securityBearerToken = !!security?.find((s) => "BearerAuth" in s);
+      if (securityBearerToken) {
         operationObject$1.parameters?.push({
           name: "Authorization",
           in: "header",
           required: true,
           schema: {
             type: "string"
-          },
-          description: "Authorization Header"
+          }
+        });
+      }
+      const requestBody = operationObject$1.requestBody;
+      const requestBodyContentType = Object.keys(requestBody?.content ?? {})?.[0];
+      if (requestBodyContentType) {
+        operationObject$1.parameters?.push({
+          name: "Content-Type",
+          in: "header",
+          required: true,
+          schema: {
+            type: "string",
+            default: requestBodyContentType
+          }
         });
       }
       for (const parameter of [...pathItem.parameters ?? [], ...operationObject$1.parameters ?? []]) {

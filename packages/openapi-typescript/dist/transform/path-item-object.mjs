@@ -31,15 +31,29 @@ function transformPathItemObject(pathItem, options) {
     }
     const keyedParameters = {};
     if (!("$ref" in operationObject)) {
-      if (operationObject.security && operationObject.security.find((s) => "BearerAuth" in s)) {
+      const security = operationObject.security;
+      const securityBearerToken = !!security?.find((s) => "BearerAuth" in s);
+      if (securityBearerToken) {
         operationObject.parameters?.push({
           name: "Authorization",
           in: "header",
           required: true,
           schema: {
             type: "string"
-          },
-          description: "Authorization Header"
+          }
+        });
+      }
+      const requestBody = operationObject.requestBody;
+      const requestBodyContentType = Object.keys(requestBody?.content ?? {})?.[0];
+      if (requestBodyContentType) {
+        operationObject.parameters?.push({
+          name: "Content-Type",
+          in: "header",
+          required: true,
+          schema: {
+            type: "string",
+            default: requestBodyContentType
+          }
         });
       }
       for (const parameter of [...pathItem.parameters ?? [], ...operationObject.parameters ?? []]) {
