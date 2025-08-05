@@ -47,7 +47,8 @@
     "packages/openapi-typescript/dist/**/*.cjs",
     "packages/openapi-typescript/dist/**/*.cts",
     "packages/openapi-typescript/dist/**/*.mjs",
-    "packages/openapi-typescript/dist/**/*.mts"
+    "packages/openapi-typescript/dist/**/*.mts",
+    "packages/openapi-typescript/package.json"
   ],
   "peerDependencies": {
     "typescript": "^5.x"
