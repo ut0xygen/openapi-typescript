@@ -44,10 +44,10 @@
     "openapi-typescript": "packages/openapi-typescript/bin/cli.js"
   },
   "files": [
-    "packages/openapi-typescript/dist/*.cjs",
-    "packages/openapi-typescript/dist/*.cts",
-    "packages/openapi-typescript/dist/*.mjs",
-    "packages/openapi-typescript/dist/*.mts"
+    "packages/openapi-typescript/dist/**/*.cjs",
+    "packages/openapi-typescript/dist/**/*.cts",
+    "packages/openapi-typescript/dist/**/*.mjs",
+    "packages/openapi-typescript/dist/**/*.mts"
   ],
   "peerDependencies": {
     "typescript": "^5.x"
