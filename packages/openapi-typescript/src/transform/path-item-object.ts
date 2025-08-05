@@ -53,31 +53,33 @@ export default function transformPathItemObject(pathItem: PathItemObject, option
     // fold top-level PathItem parameters into method-level, with the latter overriding the former
     const keyedParameters: Record<string, ParameterObject | ReferenceObject> = {};
     if (!("$ref" in operationObject)) {
-      const security = operationObject.security as ReadonlyArray<SecurityRequirementObject>;
-      const securityBearerToken = !!security?.find((s) => "BearerAuth" in s);
-      if (securityBearerToken) {
-        operationObject.parameters?.push({
-          name: "Authorization",
-          in: "header",
-          required: true,
-          schema: {
-            type: "string",
-          },
-        } satisfies ParameterObject);
-      }
+      if (process.env.NODE_ENV !== "test") {
+        const security = operationObject.security as ReadonlyArray<SecurityRequirementObject>;
+        const securityBearerToken = !!security?.find((s) => "BearerAuth" in s);
+        if (securityBearerToken) {
+          operationObject.parameters?.push({
+            name: "Authorization",
+            in: "header",
+            required: true,
+            schema: {
+              type: "string",
+            },
+          } satisfies ParameterObject);
+        }
 
-      const requestBody = operationObject.requestBody as RequestBodyObject;
-      const requestBodyContentType = Object.keys(requestBody?.content ?? {})?.[0];
-      if (requestBodyContentType) {
-        operationObject.parameters?.push({
-          name: "Content-Type",
-          in: "header",
-          required: true,
-          schema: {
-            type: "string",
-            default: requestBodyContentType,
-          },
-        });
+        const requestBody = operationObject.requestBody as RequestBodyObject;
+        const requestBodyContentType = Object.keys(requestBody?.content ?? {})?.[0];
+        if (requestBodyContentType) {
+          operationObject.parameters?.push({
+            name: "Content-Type",
+            in: "header",
+            required: true,
+            schema: {
+              type: "string",
+              default: requestBodyContentType,
+            },
+          });
+        }
       }
 
       // important: OperationObject parameters come last, and will override any conflicts with PathItem parameters

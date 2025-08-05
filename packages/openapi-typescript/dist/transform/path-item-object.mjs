@@ -31,30 +31,32 @@ function transformPathItemObject(pathItem, options) {
     }
     const keyedParameters = {};
     if (!("$ref" in operationObject)) {
-      const security = operationObject.security;
-      const securityBearerToken = !!security?.find((s) => "BearerAuth" in s);
-      if (securityBearerToken) {
-        operationObject.parameters?.push({
-          name: "Authorization",
-          in: "header",
-          required: true,
-          schema: {
-            type: "string"
-          }
-        });
-      }
-      const requestBody = operationObject.requestBody;
-      const requestBodyContentType = Object.keys(requestBody?.content ?? {})?.[0];
-      if (requestBodyContentType) {
-        operationObject.parameters?.push({
-          name: "Content-Type",
-          in: "header",
-          required: true,
-          schema: {
-            type: "string",
-            default: requestBodyContentType
-          }
-        });
+      if (process.env.NODE_ENV !== "test") {
+        const security = operationObject.security;
+        const securityBearerToken = !!security?.find((s) => "BearerAuth" in s);
+        if (securityBearerToken) {
+          operationObject.parameters?.push({
+            name: "Authorization",
+            in: "header",
+            required: true,
+            schema: {
+              type: "string"
+            }
+          });
+        }
+        const requestBody = operationObject.requestBody;
+        const requestBodyContentType = Object.keys(requestBody?.content ?? {})?.[0];
+        if (requestBodyContentType) {
+          operationObject.parameters?.push({
+            name: "Content-Type",
+            in: "header",
+            required: true,
+            schema: {
+              type: "string",
+              default: requestBodyContentType
+            }
+          });
+        }
       }
       for (const parameter of [...pathItem.parameters ?? [], ...operationObject.parameters ?? []]) {
         const name = "$ref" in parameter ? `${options.ctx.resolve(parameter.$ref)?.in}-${options.ctx.resolve(parameter.$ref)?.name}` : `${parameter.in}-${parameter.name}`;

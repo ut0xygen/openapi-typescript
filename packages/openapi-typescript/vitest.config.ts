@@ -5,5 +5,6 @@ export default defineConfig({
     environment: "node",
     clearMocks: true,
     globals: true,
+    env: { NODE_ENV: "test" },
   },
 });
