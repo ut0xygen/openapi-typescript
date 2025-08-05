@@ -6,6 +6,7 @@ import type {
   ParameterObject,
   PathItemObject,
   ReferenceObject,
+  SecurityRequirementObject,
   TransformNodeOptions,
 } from "../types.js";
 import transformOperationObject, { injectOperationObject } from "./operation-object.js";
@@ -51,6 +52,21 @@ export default function transformPathItemObject(pathItem: PathItemObject, option
     // fold top-level PathItem parameters into method-level, with the latter overriding the former
     const keyedParameters: Record<string, ParameterObject | ReferenceObject> = {};
     if (!("$ref" in operationObject)) {
+      if (
+        operationObject.security &&
+        (operationObject.security as ReadonlyArray<SecurityRequirementObject>).find((s) => "BearerAuth" in s)
+      ) {
+        operationObject.parameters?.push({
+          name: "Authorization",
+          in: "header",
+          required: true,
+          schema: {
+            type: "string",
+          },
+          description: "Authorization Header",
+        } satisfies ParameterObject);
+      }
+
       // important: OperationObject parameters come last, and will override any conflicts with PathItem parameters
       for (const parameter of [...(pathItem.parameters ?? []), ...(operationObject.parameters ?? [])]) {
         // fix: #1798, use unique key
