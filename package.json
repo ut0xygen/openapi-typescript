@@ -1,5 +1,5 @@
 {
-  "name": "openapi-typescript-monorepo",
+  "name": "openapi-typescript-monorepo-ut0xygen",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -39,5 +39,19 @@
       "limit": "7 kB",
       "brotli": false
     }
-  ]
+  ],
+  "bin": {
+    "openapi-typescript": "packages/openapi-typescript/bin/cli.js"
+  },
+  "peerDependencies": {
+    "typescript": "^5.x"
+  },
+  "dependencies": {
+    "@redocly/openapi-core": "^1.34.3",
+    "ansi-colors": "^4.1.3",
+    "change-case": "^5.4.4",
+    "parse-json": "^8.3.0",
+    "supports-color": "^10.0.0",
+    "yargs-parser": "^21.1.1"
+  }
 }
